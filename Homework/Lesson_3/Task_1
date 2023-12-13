@@ -1,0 +1,80 @@
+import hashlib
+
+# frontend --------------------------
+info = """
+USER:\t\t{}
+LAST CMD:\t{}
+"""
+
+# database --------------------------
+database = {}
+
+# session ---------------------------
+current_user = 'anonymous'
+
+# backend ---------------------------
+working = True
+cmd = "null"
+
+while working:
+    print(info.format(current_user, cmd))
+    cmd = input(">> ")
+
+    if cmd == "signin":
+        login = input("login: ")
+        password_1 = input("password: ")
+        password_2 = input("repeat password: ")
+
+
+        if current_user != 'anonymous':
+            print("You need to log out before creating a new account.")
+            continue
+
+
+        if password_1 != password_2:
+            print("Passwords do not match. Please try again.")
+            continue
+
+
+        hashed_password = hashlib.sha256(password_1.encode()).hexdigest()
+
+
+        database[login] = hashed_password
+        print("Account created successfully.")
+
+    elif cmd == "login":
+        login = input("login: ")
+        password = input("password: ")
+
+
+        if current_user != 'anonymous':
+            print("You are already logged in. Please log out to login with different credentials.")
+            continue
+
+
+        if login not in database:
+            print("User does not exist. Please sign up to create an account.")
+            continue
+
+
+        hashed_password = hashlib.sha256(password.encode()).hexdigest()
+
+
+        if hashed_password == database[login]:
+            current_user = login
+            print("Logged in successfully.")
+        else:
+            print("Incorrect password. Please try again.")
+
+    elif cmd == "logout":
+        if current_user == 'anonymous':
+            print("You are not currently logged in.")
+        else:
+            current_user = 'anonymous'
+            print("Logged out successfully.")
+
+    else:
+        working = False
+
+else:
+    print("WORK COMPLETED")

@@ -1,0 +1,29 @@
+import time
+from functools import wraps
+
+def cache_with_expiry(lifetime):
+    def decorator(f):
+        cache = {}
+
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            key = (id(f), args, tuple(kwargs.items()))
+            if key in cache and time.time() - cache[key][1] < lifetime:
+
+                return cache[key][0]
+
+            result = f(*args, **kwargs)
+            cache[key] = (result, time.time())
+            return result
+
+        return wrapper
+    return decorator
+
+@cache_with_expiry(lifetime=5)
+def calculate_sum(a, b):
+    print("Calculating sum...")
+    time.sleep(3)
+    return a + b
+
+print(calculate_sum(1, 7))
+print(calculate_sum(1, 7))

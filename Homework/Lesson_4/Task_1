@@ -1,0 +1,30 @@
+def collatz_sequence_length(cache, n):
+    if n in cache:
+        return cache[n]
+    if n == 1:
+        return 1
+    count = 1
+    if n % 2 == 0:
+        count += collatz_sequence_length(cache, n // 2)
+    else:
+        count += collatz_sequence_length(cache, n * 3 + 1)
+    cache[n] = count
+    return count
+
+def find_longest_chain(start, end):
+    max_length = 0
+    max_start = 0
+    cache = {}
+    for number in range(start, end):
+        chain_length = collatz_sequence_length(cache, number)
+        if chain_length > max_length:
+            max_length = chain_length
+            max_start = number
+    return max_start, max_length
+
+start_number = 1
+end_number = 1000000
+
+result = find_longest_chain(start_number, end_number)
+
+print(f"Начальное число, меньшее миллиона, которое дает самую длинную цепочку, равно {result[0]}  длина цепочки {result[1]}.")
